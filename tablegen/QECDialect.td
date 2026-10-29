@@ -100,4 +100,12 @@ def QEC_U3_Op : QEC_Op<"u3"> {
                        "`:` type($input) `->` type($output)";
 }
 
+// A scheduling fence: the two qubits are synchronized at this point.
+// Outputs alias inputs (threading ensures linearity is preserved).
+def QEC_Barrier_Op : QEC_Op<"barrier"> {
+  let summary = "Scheduling barrier between two qubits";
+  let arguments = (ins QEC_Qubit:$in0, QEC_Qubit:$in1);
+  let results   = (outs QEC_Qubit:$out0, QEC_Qubit:$out1);
+  let assemblyFormat = "$in0 `,` $in1 attr-dict `:` type($in0) `,` type($in1)";
+}
 #endif // QEC_DIALECT_TD

@@ -74,6 +74,7 @@ add_mlir_dialect_library(MLIRQEC
         lib/QECCNOTCancel.cpp
         lib/QECFuse1Q.cpp
         lib/QECCNOTConjugation.cpp
+        lib/QECSchedule.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC

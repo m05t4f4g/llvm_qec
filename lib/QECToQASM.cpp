@@ -76,6 +76,17 @@ namespace {
                     lines.push_back(oss.str());
                     continue;
                 }
+                if (auto barrier = dyn_cast<Barrier_Op>(op)) {
+                    unsigned i0 = qasmIndex[barrier.getIn0()];
+                    unsigned i1 = qasmIndex[barrier.getIn1()];
+                    qasmIndex[barrier.getOut0()] = i0;
+                    qasmIndex[barrier.getOut1()] = i1;
+
+                    std::ostringstream oss;
+                    oss << "barrier q[" << i0 << "],q[" << i1 << "];";
+                    lines.push_back(oss.str());
+                    continue;
+                }
                 if (auto meas = dyn_cast<Measure_Op>(op)) {
                     unsigned qIdx = qasmIndex[meas.getInput()];
                     unsigned cIdx = numMeasures++;

@@ -8,6 +8,7 @@ namespace mlir::qec {
     void registerQECCancelCNOTPass();
     void registerQECFuse1QPass();
     void registerQECCNOTConjugationPass();
+    void registerQECSchedulePass();
 
 
 } // namespace mlir::qec
