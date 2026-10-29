@@ -79,6 +79,7 @@ add_mlir_dialect_library(MLIRQEC
         lib/QECScheduler.cpp
         lib/QECDecomposeU3.cpp
         lib/QECRoute.cpp
+        lib/QECDCE.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC

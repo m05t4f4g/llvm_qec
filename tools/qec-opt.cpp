@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
     mlir::qec::registerQECSchedulerPass();
     mlir::qec::registerQECDecomposeU3Pass();
     mlir::qec::registerQECRoutePass();
+    mlir::qec::registerQECDCEPass();
 
     return mlir::asMainReturnCode(
             mlir::MlirOptMain(argc, argv, "QEC Dialect Driver", registry));
