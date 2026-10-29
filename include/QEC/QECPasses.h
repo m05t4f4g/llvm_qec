@@ -9,7 +9,11 @@ namespace mlir::qec {
     void registerQECFuse1QPass();
     void registerQECCNOTConjugationPass();
     void registerQECSchedulePass();
-    void registerQECToQIRPass();
+    void registerQECDeadGateElimPass();       // Part 1
+    void registerQECSchedulerPass();          // Part 2
+    void registerQECDecomposeU3Pass();        // Part 3
+    void registerQECRoutePass();              // Part 4
+
 
 
 } // namespace mlir::qec
