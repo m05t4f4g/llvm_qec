@@ -101,3 +101,36 @@ target_link_libraries(qec-opt PRIVATE
         MLIRIR
         MLIRSupport
         )
+
+# ---------------------------------------------------------------------------
+# Translation library (qec -> OpenQASM 2.0)
+# ---------------------------------------------------------------------------
+add_mlir_library(MLIRQECTranslation
+        lib/QECToQASM.cpp
+
+        ADDITIONAL_HEADER_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC
+
+        LINK_LIBS PUBLIC
+        MLIRQEC
+        MLIRTranslateLib
+        MLIRFuncDialect
+        MLIRArithDialect
+        MLIRIR
+        MLIRSupport
+        )
+
+# ---------------------------------------------------------------------------
+# qec-translate driver
+# ---------------------------------------------------------------------------
+add_mlir_tool(qec-translate tools/qec-translate.cpp)
+
+target_link_libraries(qec-translate PRIVATE
+        MLIRQECTranslation
+        MLIRQEC
+        MLIRTranslateLib
+        MLIRFuncDialect
+        MLIRArithDialect
+        MLIRIR
+        MLIRSupport
+        )
