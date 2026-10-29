@@ -137,3 +137,37 @@ target_link_libraries(qec-translate PRIVATE
         MLIRIR
         MLIRSupport
         )
+
+
+# ---------------------------------------------------------------------------
+# QIR translation library (qec -> QIR)
+# ---------------------------------------------------------------------------
+add_mlir_library(MLIRQECQIRTranslation
+        lib/QECToQIR.cpp
+
+        ADDITIONAL_HEADER_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC
+
+        LINK_LIBS PUBLIC
+        MLIRQEC
+        MLIRTranslateLib
+        MLIRFuncDialect
+        MLIRArithDialect
+        MLIRIR
+        MLIRSupport
+        )
+
+# ---------------------------------------------------------------------------
+# qec-to-qir driver
+# ---------------------------------------------------------------------------
+add_mlir_tool(qec-to-qir tools/qec-to-qir.cpp)
+
+target_link_libraries(qec-to-qir PRIVATE
+        MLIRQECQIRTranslation
+        MLIRQEC
+        MLIRTranslateLib
+        MLIRFuncDialect
+        MLIRArithDialect
+        MLIRIR
+        MLIRSupport
+        )
