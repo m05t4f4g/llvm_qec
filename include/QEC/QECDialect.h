@@ -1,9 +1,9 @@
-// include/QEC/QECDialect.h
 #ifndef QEC_DIALECT_H
 #define QEC_DIALECT_H
 
 #include "mlir/IR/Dialect.h"
 
-#include "QEC/QECDialect.h.inc"   // <-- .h.inc
+// Generated dialect class declaration (declarations only).
+#include "QEC/QECDialect.h.inc"
 
 #endif // QEC_DIALECT_H

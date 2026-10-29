@@ -6,6 +6,6 @@
 #include "mlir/IR/TypeSupport.h"
 
 #define GET_TYPEDEF_CLASSES
-#include "QEC/QECTypes.h.inc"     // declarations only
+#include "QEC/QECTypes.h.inc"     // declarations only — never .cpp.inc here
 
 #endif // QEC_TYPES_H

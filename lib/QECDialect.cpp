@@ -1,10 +1,10 @@
-// lib/QECDialect.cpp
 #include "QEC/QECDialect.h"
 #include "QEC/QECOps.h"
 #include "QEC/QECTypes.h"
 
 #include "mlir/IR/DialectImplementation.h"
 
+// Generated dialect definitions: constructor + parseType/printType.
 #include "QEC/QECDialect.cpp.inc"
 
 using namespace mlir;
