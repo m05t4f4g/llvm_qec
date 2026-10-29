@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
     mlir::qec::registerQECCancelHHPass();
     mlir::qec::registerQECCancelCNOTPass();
     mlir::qec::registerQECFuse1QPass();
+    mlir::qec::registerQECCNOTConjugationPass();
 
     return mlir::asMainReturnCode(
             mlir::MlirOptMain(argc, argv, "QEC Dialect Driver", registry));

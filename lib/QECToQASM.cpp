@@ -1,4 +1,5 @@
 // lib/QECToQASM.cpp
+#include <sstream>
 #include "QEC/QECToQASM.h"
 #include "QEC/QECOps.h"
 #include "QEC/QECTypes.h"
@@ -61,6 +62,18 @@ namespace {
                     qasmIndex[cnot.getTargetOut()]  = tIdx;
                     lines.push_back("cx q[" + std::to_string(cIdx) + "],q["
                                     + std::to_string(tIdx) + "];");
+                    continue;
+                }
+                if (auto u3 = dyn_cast<U3_Op>(op)) {
+                    unsigned idx = qasmIndex[u3.getInput()];
+                    qasmIndex[u3.getOutput()] = idx;
+
+                    std::ostringstream oss;
+                    oss << "u3(" << u3.getTheta().convertToDouble() << ","
+                        << u3.getPhi().convertToDouble()   << ","
+                        << u3.getLambda().convertToDouble() << ") q["
+                        << idx << "];";
+                    lines.push_back(oss.str());
                     continue;
                 }
                 if (auto meas = dyn_cast<Measure_Op>(op)) {
