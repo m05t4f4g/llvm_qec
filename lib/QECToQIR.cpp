@@ -150,25 +150,51 @@ namespace {
                     return success();
                 }
 
-                std::string retType, retVals;
-                for (unsigned i = 0; i < ret.getNumOperands(); ++i) {
-                    Value v = ret.getOperand(i);
-                    if (i > 0) { retType += ", "; retVals += ", "; }
-                    if (isa<IntegerType>(v.getType()) && v.getType().isInteger(1)) {
-                        unsigned ri = resultIndex.lookup(v);
-                        retType += "i1";
-                        retVals += "%v" + std::to_string(ri);
-                    } else if (isa<QubitType>(v.getType())) {
-                        retType += "%Qubit*";
-                        retVals += qubitRef(v);
-                    } else {
+                // Helper: render a single value's type and string form.
+                auto valueTy = [&](Value v) -> std::optional<std::string> {
+                    if (v.getType().isInteger(1))     return std::string("i1");
+                    if (isa<QubitType>(v.getType()))  return std::string("%Qubit*");
+                    return std::nullopt;
+                };
+                auto valueStr = [&](Value v) -> std::string {
+                    if (v.getType().isInteger(1))
+                        return "%v" + std::to_string(resultIndex.lookup(v));
+                    return qubitRef(v);
+                };
+
+                // Single value: direct `ret <ty> <val>`.
+                if (ret.getNumOperands() == 1) {
+                    auto t = valueTy(ret.getOperand(0));
+                    if (!t)
                         return op.emitError("qec-to-qir: unsupported return type");
-                    }
+                    os << "  ret " << *t << " " << valueStr(ret.getOperand(0))
+                       << "\n";
+                    return success();
                 }
 
-                if (ret.getNumOperands() > 1)
-                    retType = "{ " + retType + " }";
-                os << "  ret " << retType << " " << retVals << "\n";
+                // Multiple values: LLVM struct literal can't embed SSA names, so
+                // build the aggregate via insertvalue, then ret the SSA.
+                std::string aggType = "{ ";
+                for (unsigned i = 0; i < ret.getNumOperands(); ++i) {
+                    auto t = valueTy(ret.getOperand(i));
+                    if (!t)
+                        return op.emitError("qec-to-qir: unsupported return type");
+                    if (i) aggType += ", ";
+                    aggType += *t;
+                }
+                aggType += " }";
+
+                std::string prev = "undef";
+                for (unsigned i = 0; i < ret.getNumOperands(); ++i) {
+                    Value v = ret.getOperand(i);
+                    std::string t   = *valueTy(v);
+                    std::string s   = valueStr(v);
+                    std::string cur = "%agg" + std::to_string(i);
+                    os << "  " << cur << " = insertvalue " << aggType << " " << prev
+                       << ", " << t << " " << s << ", " << i << "\n";
+                    prev = cur;
+                }
+                os << "  ret " << aggType << " " << prev << "\n";
                 return success();
             }
 
@@ -183,7 +209,7 @@ namespace {
     LogicalResult emitQIRForFunc(func::FuncOp func, raw_ostream &os) {
         auto fnTy = func.getFunctionType();
 
-        // Return type.
+        // ---- return type ------------------------------------------------------
         std::string retTy;
         if (fnTy.getNumResults() == 0) {
             retTy = "void";
@@ -204,21 +230,29 @@ namespace {
             retTy += " }";
         }
 
-        // Argument types.
-        std::string argTys;
-        for (unsigned i = 0; i < fnTy.getNumInputs(); ++i) {
-            if (i) argTys += ", ";
-            Type at = fnTy.getInput(i);
-            if (isa<QubitType>(at))         argTys += "%Qubit*";
-            else return func.emitError("qec-to-qir: unsupported arg type");
-        }
-
-        os << "define " << retTy << " @" << func.getSymName()
-           << "(" << argTys << ") {\n";
-
+        // ---- set up builder and bind arguments first -------------------------
+        // We must populate qubitIndex *before* we can render the parameter
+        // names, because the names come from qubitIndex (q0, q1, ...).
         QirFuncBuilder b(os);
         for (BlockArgument arg : func.getArguments())
             b.bindArgument(arg);
+
+        // ---- parameter list: <type> <name>, one per argument ------------------
+        std::string paramList;
+        for (unsigned i = 0; i < fnTy.getNumInputs(); ++i) {
+            if (i) paramList += ", ";
+            Type at = fnTy.getInput(i);
+            if (isa<QubitType>(at)) {
+                Value arg = func.getArgument(i);
+                paramList += "%Qubit* " + b.qubitRef(arg);   // "%Qubit* %q0"
+            } else {
+                return func.emitError("qec-to-qir: unsupported arg type");
+            }
+        }
+
+        // ---- emit function header + body --------------------------------------
+        os << "define " << retTy << " @" << func.getSymName()
+           << "(" << paramList << ") {\n";
 
         for (Block &block : func.getBody())
             for (Operation &op : block)
