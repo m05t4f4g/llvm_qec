@@ -108,4 +108,19 @@ def QEC_Barrier_Op : QEC_Op<"barrier"> {
   let results   = (outs QEC_Qubit:$out0, QEC_Qubit:$out1);
   let assemblyFormat = "$in0 `,` $in1 attr-dict `:` type($in0) `,` type($in1)";
 }
+
+// Swap: exchanges the states of two qubits (routing primitive).
+def QEC_Swap_Op : QEC_Op<"swap"> {
+  let summary = "Swap two qubits";
+  let arguments = (ins QEC_Qubit:$in0, QEC_Qubit:$in1);
+  let results   = (outs QEC_Qubit:$out0, QEC_Qubit:$out1);
+  let assemblyFormat = "$in0 `,` $in1 attr-dict `:` type($in0) `,` type($in1)";
+
+  // Inference overload: result types = operand types.
+  let builders = [
+    OpBuilder<(ins "::mlir::Value":$in0, "::mlir::Value":$in1), [{
+      build($_builder, $_state, in0.getType(), in1.getType(), in0, in1);
+    }]>
+  ];
+}
 #endif // QEC_DIALECT_TD

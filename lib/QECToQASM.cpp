@@ -87,6 +87,18 @@ namespace {
                     lines.push_back(oss.str());
                     continue;
                 }
+                if (auto swap = dyn_cast<Swap_Op>(op)) {
+                    unsigned i0 = qasmIndex[swap.getIn0()];
+                    unsigned i1 = qasmIndex[swap.getIn1()];
+                    // swap(x, y): x's identity moves to y's index and vice versa.
+                    qasmIndex[swap.getOut0()] = i1;
+                    qasmIndex[swap.getOut1()] = i0;
+
+                    std::ostringstream oss;
+                    oss << "swap q[" << i0 << "],q[" << i1 << "];";
+                    lines.push_back(oss.str());
+                    continue;
+                }
                 if (auto meas = dyn_cast<Measure_Op>(op)) {
                     unsigned qIdx = qasmIndex[meas.getInput()];
                     unsigned cIdx = numMeasures++;

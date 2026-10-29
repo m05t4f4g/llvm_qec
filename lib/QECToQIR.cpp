@@ -121,6 +121,18 @@ namespace {
                 return success();
             }
 
+            // -- 5.5 Swap -----------------------------------------------------
+            if (auto swap = dyn_cast<Swap_Op>(op)) {
+                unsigned i0 = qubitIndex.lookup(swap.getIn0());
+                unsigned i1 = qubitIndex.lookup(swap.getIn1());
+                // Physical identity: swap the wire indices.
+                qubitIndex[swap.getOut0()] = i1;
+                qubitIndex[swap.getOut1()] = i0;
+                os << "  call void @__quantum__qis__swap__body(%Qubit* %q" << i0
+                   << ", %Qubit* %q" << i1 << ")\n";
+                return success();
+            }
+
             // -- 6. Measure ----------------------------------------------------
             if (auto meas = dyn_cast<Measure_Op>(op)) {
                 unsigned qi = qubitIndex.lookup(meas.getInput());
@@ -296,6 +308,7 @@ declare void @__quantum__qis__t__adj(%Qubit*)
 declare void @__quantum__qis__u3__body(%Qubit*, double, double, double)
 declare void @__quantum__qis__cnot__body(%Qubit*, %Qubit*)
 declare void @__quantum__qis__mz__body(%Qubit*, %Result*)
+declare void @__quantum__qis__swap__body(%Qubit*, %Qubit*)
 
 )qir";
 

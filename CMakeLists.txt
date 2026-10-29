@@ -75,10 +75,10 @@ add_mlir_dialect_library(MLIRQEC
         lib/QECFuse1Q.cpp
         lib/QECCNOTConjugation.cpp
         lib/QECSchedule.cpp
-        lib/QECDeadGateElim.cpp          # Part 1
-        lib/QECScheduler.cpp             # Part 2
-        lib/QECDecomposeU3.cpp           # Part 3
-#        lib/QECRoute.cpp                 # Part 4
+        lib/QECDeadGateElim.cpp
+        lib/QECScheduler.cpp
+        lib/QECDecomposeU3.cpp
+        lib/QECRoute.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC
