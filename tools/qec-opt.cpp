@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     mlir::qec::registerQECSchedulePass();
     mlir::qec::registerQECDeadGateElimPass();
     mlir::qec::registerQECSchedulerPass();
-//    mlir::qec::registerQECDecomposeU3Pass();
+    mlir::qec::registerQECDecomposeU3Pass();
 //    mlir::qec::registerQECRoutePass();
 
     return mlir::asMainReturnCode(

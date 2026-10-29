@@ -77,7 +77,7 @@ add_mlir_dialect_library(MLIRQEC
         lib/QECSchedule.cpp
         lib/QECDeadGateElim.cpp          # Part 1
         lib/QECScheduler.cpp             # Part 2
-#        lib/QECDecomposeU3.cpp           # Part 3
+        lib/QECDecomposeU3.cpp           # Part 3
 #        lib/QECRoute.cpp                 # Part 4
 
         ADDITIONAL_HEADER_DIRS
