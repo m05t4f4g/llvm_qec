@@ -69,4 +69,35 @@ def QEC_Measure_Op : QEC_Op<"measure"> {
   let assemblyFormat = "$input attr-dict `:` type($input)";
 }
 
+//===----------------------------------------------------------------------===//
+// Single-qubit named gates (all are U3 specialisations)
+//===----------------------------------------------------------------------===//
+class QEC_SingleQubitOp<string mnemonic, list<Trait> traits = []>
+    : QEC_Op<mnemonic, traits> {
+  let arguments = (ins  QEC_Qubit:$input);
+  let results   = (outs QEC_Qubit:$output);
+  let assemblyFormat = "$input attr-dict `:` type($input) `->` type($output)";
+}
+
+def QEC_S_Op   : QEC_SingleQubitOp<"s">    { let summary = "S gate (phase π/2)"; }
+def QEC_Sdg_Op : QEC_SingleQubitOp<"sdg">  { let summary = "S† gate"; }
+def QEC_T_Op   : QEC_SingleQubitOp<"t">    { let summary = "T gate (phase π/4)"; }
+def QEC_Tdg_Op : QEC_SingleQubitOp<"tdg">  { let summary = "T† gate"; }
+def QEC_X_Op   : QEC_SingleQubitOp<"x">    { let summary = "Pauli X"; }
+def QEC_Y_Op   : QEC_SingleQubitOp<"y">    { let summary = "Pauli Y"; }
+def QEC_Z_Op   : QEC_SingleQubitOp<"z">    { let summary = "Pauli Z"; }
+
+// Universal 1-qubit gate:  U3(θ,φ,λ)
+//   [[cos(θ/2),            -e^{iλ}·sin(θ/2)],
+//    [e^{iφ}·sin(θ/2),  e^{i(φ+λ)}·cos(θ/2)]]
+// Syntax:  qec.u3 %q[1.57, 0.0, 3.14] : !qec.qubit -> !qec.qubit
+def QEC_U3_Op : QEC_Op<"u3"> {
+  let summary = "Universal single-qubit gate U3(θ, φ, λ)";
+  let arguments = (ins  QEC_Qubit:$input,
+                        F64Attr:$theta, F64Attr:$phi, F64Attr:$lambda);
+  let results   = (outs QEC_Qubit:$output);
+  let assemblyFormat = "$input `[` $theta `,` $phi `,` $lambda `]` attr-dict "
+                       "`:` type($input) `->` type($output)";
+}
+
 #endif // QEC_DIALECT_TD

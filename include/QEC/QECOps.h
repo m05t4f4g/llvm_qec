@@ -1,6 +1,7 @@
 #ifndef QEC_OPS_H
 #define QEC_OPS_H
 
+#include "mlir/Bytecode/BytecodeOpInterface.h"
 #include "mlir/IR/BuiltinTypes.h"
 #include "mlir/IR/OpDefinition.h"
 #include "mlir/IR/OpImplementation.h"   // OpAsmSetValueNameFn / OpAsmOpInterface
