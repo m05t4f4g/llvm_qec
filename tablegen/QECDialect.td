@@ -33,15 +33,40 @@ def QEC_Qubit : TypeDef<QEC_Dialect, "Qubit"> {
 }
 
 //===----------------------------------------------------------------------===//
-// CNOT op
+// Ops
 //===----------------------------------------------------------------------===//
-// NOTE: def name <prefix>_<CppClass>. `QEC_CNOT_Op` -> class `CNOT_Op`.
+
+// qec.alloc : produces a fresh |0> qubit.
+//   %q = qec.alloc : !qec.qubit
+def QEC_Alloc_Op : QEC_Op<"alloc"> {
+  let results = (outs QEC_Qubit:$output);
+  let assemblyFormat = "attr-dict `:` type($output)";
+}
+
+// qec.h : Hadamard on a single qubit.
+//   %out = qec.h %in : !qec.qubit -> !qec.qubit
+def QEC_H_Op : QEC_Op<"h"> {
+  let arguments = (ins  QEC_Qubit:$input);
+  let results   = (outs QEC_Qubit:$output);
+  let assemblyFormat = "$input attr-dict `:` type($input) `->` type($output)";
+}
+
+// qec.cnot : two-qubit CNOT.
+//   %co, %to = qec.cnot %c, %t : !qec.qubit, !qec.qubit -> !qec.qubit, !qec.qubit
 def QEC_CNOT_Op : QEC_Op<"cnot"> {
-  let arguments = (ins  QEC_Qubit:$control,    QEC_Qubit:$target);
+  let arguments = (ins  QEC_Qubit:$control,     QEC_Qubit:$target);
   let results   = (outs QEC_Qubit:$control_out, QEC_Qubit:$target_out);
   let assemblyFormat = "$control `,` $target attr-dict "
                        "`:` type($control) `,` type($target) "
                        "`->` type($control_out) `,` type($target_out)";
+}
+
+// qec.measure : measurement in the Z basis, produces i1.
+//   %bit = qec.measure %q : !qec.qubit
+def QEC_Measure_Op : QEC_Op<"measure"> {
+  let arguments = (ins  QEC_Qubit:$input);
+  let results   = (outs I1:$result);
+  let assemblyFormat = "$input attr-dict `:` type($input)";
 }
 
 #endif // QEC_DIALECT_TD
