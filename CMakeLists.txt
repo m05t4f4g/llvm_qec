@@ -69,6 +69,7 @@ add_mlir_dialect_library(MLIRQEC
         lib/QECDialect.cpp
         lib/QECOps.cpp
         lib/QECTypes.cpp
+        lib/QECLinearity.cpp
 
         ADDITIONAL_HEADER_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/QEC
@@ -81,6 +82,7 @@ add_mlir_dialect_library(MLIRQEC
         MLIRSupport
         MLIRFuncDialect
         MLIRArithDialect
+        MLIRPass
         )
 
 # ---------------------------------------------------------------------------
