@@ -5,7 +5,7 @@ error-correction circuits, with two backends (OpenQASM 2.0 and QIR).
 
 Built against **LLVM / MLIR 19**.
 
-[![Build](https://github.com/<YOUR-USER>/<YOUR-REPO>/actions/workflows/build.yml/badge.svg)](https://github.com/<YOUR-USER>/<YOUR-REPO>/actions/workflows/build.yml)
+[![Build](https://github.com/m05t4f4g/llvm_qec/actions/workflows/build.yml/badge.svg)](https://github.com/<YOUR-USER>/<YOUR-REPO>/actions/workflows/build.yml)
 
 ## What's in the box
 
