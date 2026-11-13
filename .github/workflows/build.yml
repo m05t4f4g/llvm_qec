@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: build on ubuntu-24.04
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LLVM / MLIR 19
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            llvm-19-dev libmlir-19-dev mlir-19-tools \
+            clang-19 cmake ninja-build
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build \
+            --target qec-opt qec-translate qec-to-qir \
+            -j $(nproc)
+
+      - name: Smoke test
+        run: |
+          export PATH="/usr/lib/llvm-19/bin:$PATH"
+          ./scripts/smoke.sh build
